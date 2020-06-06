@@ -40,10 +40,7 @@ fn main() -> Result<(), systray::Error> {
     println!("Off Icon: {}", inhibit.icon_off);
     inhibit.icon_on(&app)?;
 
-    app.add_menu_item("Toggle", move |window| {
-        inhibit.toggle(&window)?;
-        Ok::<_, systray::Error>(())
-    })?;
+    app.add_menu_item("Toggle", move |window| inhibit.toggle(&window))?;
     app.add_menu_item("Quit", |window| {
         window.quit();
         Ok::<_, systray::Error>(())
