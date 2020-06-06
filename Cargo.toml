@@ -18,7 +18,6 @@
 name = "inhibit"
 version = "0.1.0"
 license-file = "LICENSE"
-license = "Apache 2"
 homepage = "https://github.com/markmandel/inhibit"
 authors = ["Mark Mandel <markmandel@google.com>"]
 edition = "2018"
@@ -26,3 +25,4 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+systray = "0.4.0"

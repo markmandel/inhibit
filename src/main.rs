@@ -14,6 +14,34 @@
  * limitations under the License.
  */
 
-fn main() {
-    println!("Hello, world!");
+use std::env::current_dir;
+
+fn main() -> Result<(), systray::Error> {
+    let mut inhibit = Inhibit { toggle: None };
+    let mut app;
+    match systray::Application::new() {
+        Ok(w) => app = w,
+        Err(_) => panic!("Can't create window!"),
+    }
+
+    let mut path = current_dir().unwrap();
+    path.push("icons");
+    path.push("baseline_screen_share_white_18dp.png");
+    let image_path = path.into_os_string().into_string().unwrap();
+    println!("Image path: {}", image_path);
+
+    app.set_icon_from_file(image_path.as_str())?;
+
+    app.add_menu_item("Quit", |window| {
+        window.quit();
+        Ok::<_, systray::Error>(())
+    })?;
+
+    println!("Waiting on message!");
+    app.wait_for_message()?;
+    Ok(())
+}
+
+struct Inhibit {
+    toggle: Option<()>,
 }

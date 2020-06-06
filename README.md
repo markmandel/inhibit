@@ -7,6 +7,7 @@ Nothing seemed to fit my custom Xmonad + Cinnamon setup, so I wrote this little 
 ## Build
 
 ```shell script
+$ sudo apt install libappindicator3-dev libgtk-3-dev gcc clang
 $ cargo build --release
 ```
 
