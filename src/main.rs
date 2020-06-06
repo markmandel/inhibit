@@ -15,23 +15,35 @@
  */
 
 use std::env::current_dir;
+use systray::Application;
 
 fn main() -> Result<(), systray::Error> {
-    let mut inhibit = Inhibit { toggle: None };
     let mut app;
     match systray::Application::new() {
         Ok(w) => app = w,
         Err(_) => panic!("Can't create window!"),
     }
 
-    let mut path = current_dir().unwrap();
-    path.push("icons");
-    path.push("baseline_screen_share_white_18dp.png");
-    let image_path = path.into_os_string().into_string().unwrap();
-    println!("Image path: {}", image_path);
+    let mut icon_root = current_dir().unwrap();
+    icon_root.push("icons");
+    let mut icon_off_path = icon_root.clone();
+    icon_root.push("baseline_screen_share_white_18dp.png");
+    icon_off_path.push("baseline_stop_screen_share_white_18dp.png");
 
-    app.set_icon_from_file(image_path.as_str())?;
+    let mut inhibit = Inhibit {
+        icon_on: icon_root.into_os_string().into_string().unwrap(),
+        icon_off: icon_off_path.into_os_string().into_string().unwrap(),
+        toggle: None,
+    };
 
+    println!("On Icon: {}", inhibit.icon_on);
+    println!("Off Icon: {}", inhibit.icon_off);
+    inhibit.icon_on(&app)?;
+
+    app.add_menu_item("Toggle", move |window| {
+        inhibit.toggle(&window)?;
+        Ok::<_, systray::Error>(())
+    })?;
     app.add_menu_item("Quit", |window| {
         window.quit();
         Ok::<_, systray::Error>(())
@@ -43,5 +55,28 @@ fn main() -> Result<(), systray::Error> {
 }
 
 struct Inhibit {
+    icon_on: String,
+    icon_off: String,
     toggle: Option<()>,
+}
+
+impl Inhibit {
+    fn toggle(&mut self, app: &Application) -> Result<(), systray::Error> {
+        match self.toggle {
+            None => {
+                self.toggle = Some(());
+                self.icon_off(app)
+            }
+            Some(_) => {
+                self.toggle = None;
+                self.icon_on(app)
+            }
+        }
+    }
+    fn icon_on(&self, app: &Application) -> Result<(), systray::Error> {
+        app.set_icon_from_file(&self.icon_on)
+    }
+    fn icon_off(&self, app: &Application) -> Result<(), systray::Error> {
+        app.set_icon_from_file(&self.icon_off)
+    }
 }
