@@ -19,6 +19,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "85bb70cc08ec97ca5450e6eba421deeea5f172c0fc61f78b5357b2a8e8be195f"
+
+[[package]]
 name = "atk"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -155,6 +161,16 @@ dependencies = [
  "textwrap",
  "unicode-width",
  "vec_map",
+]
+
+[[package]]
+name = "dbus"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "26b17a12ffaff26515889b006fc029493a3e340366a137c13cec2cdd545ea3b8"
+dependencies = [
+ "libc",
+ "libdbus-sys",
 ]
 
 [[package]]
@@ -446,6 +462,8 @@ dependencies = [
 name = "inhibit"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "dbus",
  "systray",
 ]
 
@@ -490,6 +508,15 @@ name = "libc"
 version = "0.2.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9457b06509d27052635f90d6466700c65095fdf75409b3fbdd903e988b886f49"
+
+[[package]]
+name = "libdbus-sys"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc12a3bc971424edbbf7edaf6e5740483444db63aa8e23d3751ff12a30f306f0"
+dependencies = [
+ "pkg-config",
+]
 
 [[package]]
 name = "libloading"
