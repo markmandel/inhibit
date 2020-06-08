@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+.DEFAULT_GOAL := help
+
 ## Installs to /usr/local/bin/ and puts icon in /usr/share/icons/
 install: deps release
 	sudo cp ./target/release/inhibit /usr/local/bin/
@@ -35,9 +37,6 @@ release:
 ## Installs linux dependencies
 deps:
 	sudo apt install libappindicator3-dev libgtk-3-dev gcc clang
-
-# Plonk the following at the end of your Makefile
-.DEFAULT_GOAL := help
 
 # Credit: https://gist.github.com/klmr/575726c7e05d8780505a
 .PHONY: help
