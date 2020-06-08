@@ -19,6 +19,7 @@ use std::time::Duration;
 
 use anyhow::Context;
 use dbus::blocking::SyncConnection;
+use std::sync::{Arc, Mutex};
 use systray::Application;
 
 const INHIBIT_IDLE: u32 = 8;
@@ -28,20 +29,28 @@ fn main() -> Result<(), systray::Error> {
     println!("Starting Inhibit App Indicator");
     let mut tray = Application::new().expect("Can't create systray");
 
-    let mut inhibit = Inhibit::new();
-
+    let inhibit = Inhibit::new();
     println!("On Icon: {}", inhibit.icon_on);
     println!("Off Icon: {}", inhibit.icon_off);
     inhibit.icon_on(&tray)?;
 
+    let inhibit = Arc::new(Mutex::new(inhibit));
+    let inhibit_toggle = inhibit.clone();
     tray.add_menu_item("Toggle", move |window| {
+        let mut inhibit = inhibit_toggle.lock().unwrap();
         if let Err(err) = inhibit.toggle(&window) {
             println!("Toggle error: {:?}", err);
         }
         Ok::<_, systray::Error>(())
     })?;
-    tray.add_menu_item("Quit", |window| {
-        // TODO: toggle if cookie inhabited. May need to Arc the Inhibit to pass around.
+    let inhibit_quit = inhibit.clone();
+    tray.add_menu_item("Quit", move |window| {
+        let mut inhibit = inhibit_quit.lock().unwrap();
+        if let Some(_) = inhibit.toggle {
+            if let Err(err) = inhibit.toggle(&window) {
+                println!("Toggle error: {:?}", err);
+            }
+        }
         window.quit();
         Ok::<_, systray::Error>(())
     })?;
