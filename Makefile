@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+## Installs to /usr/local/bin/ and puts icon in /usr/share/icons/
+install: deps release
+	sudo cp ./target/release/inhibit /usr/local/bin/
+	sudo chmod o+x /usr/local/bin/inhibit
+	sudo cp ./icons/*.png /usr/share/icons/
+	sudo chmod o+r /usr/share/icons/inhibit-*.png
+
 ## Builds the release
 build: release
 	cp -r ./icons ./target/release

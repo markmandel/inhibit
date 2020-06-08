@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-use std::env::current_dir;
 use std::time::Duration;
 
 use anyhow::Context;
 use dbus::blocking::SyncConnection;
+use std::env;
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use systray::Application;
 
@@ -69,11 +70,10 @@ struct Inhibit {
 
 impl Inhibit {
     fn new() -> Self {
-        let mut icon_root = current_dir().unwrap();
-        icon_root.push("icons");
+        let mut icon_root = Inhibit::icon_path();
         let mut icon_off_path = icon_root.clone();
-        icon_root.push("baseline_screen_share_white_18dp.png");
-        icon_off_path.push("baseline_stop_screen_share_white_18dp.png");
+        icon_root.push("inhibit-on.png");
+        icon_off_path.push("inhibit-off.png");
 
         Inhibit {
             conn: SyncConnection::new_session().unwrap(),
@@ -86,6 +86,18 @@ impl Inhibit {
                 .into_string()
                 .expect("failed to get icon path"),
             toggle: None,
+        }
+    }
+
+    // icon_path returns the root path for the icons
+    fn icon_path() -> PathBuf {
+        match env::var("CARGO_MANIFEST_DIR") {
+            Ok(dir) => {
+                let mut icon_root = PathBuf::from(dir);
+                icon_root.push("icons");
+                icon_root
+            }
+            Err(_) => PathBuf::from("/usr/share/icons/"),
         }
     }
 
